@@ -38,12 +38,36 @@ public class ServiceServiceTest {
     public void getByIDShouldReturnAny() throws NotFoundException, InternalServerErrorException {
 
         ServiceDomain expectedResult = this.getDefaultServiceDomain();
-                Mockito.when(serviceRepositoryDatabase.getByID(Mockito.any(), Mockito.any())).
+        Mockito.when(serviceRepositoryDatabase.getByID(Mockito.any(), Mockito.any())).
                 thenReturn(expectedResult);
 
         ServiceUserCase userCase = this.getServiceService();
         ServiceDomain result = userCase.getByID(1L, 1L);
         Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void getByIDShouldThrowInternalServerErrorException() {
+
+        InternalServerErrorException ex = Assertions.assertThrows(InternalServerErrorException.class, () -> {
+            ServiceUserCase userCase = this.getServiceService();
+            userCase.getByID(null, null);
+        });
+
+        Assertions.assertEquals(ServiceService.SERVICE_INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @Test
+    public void getByIDShouldThrowNotFoundException() {
+
+        NotFoundException ex = Assertions.assertThrows(NotFoundException.class, () -> {
+            Mockito.when(serviceRepositoryDatabase.getByID(Mockito.any(), Mockito.any())).
+                    thenReturn(null);
+            ServiceUserCase userCase = this.getServiceService();
+            userCase.getByID(Mockito.anyLong(), Mockito.anyLong());
+        });
+
+        Assertions.assertEquals(ServiceService.SERVICE_NOT_FOUND, ex.getMessage());
     }
 
 }
