@@ -1,8 +1,10 @@
 package com.petshopadmin.adapter.output.repository.database;
 
 import com.petshopadmin.application.domain.ServiceDomain;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +19,9 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
     @Override
     public ServiceDomain getByID(Long contractID, Long ID) {
 
-        ServiceDatabase serviceDatabase = serviceJPARepository.getByIDAndContractID(contractID, ID);
+        ServiceDatabase serviceDatabase = serviceJPARepository.getByIDAndContractID(ID, contractID);
+        if (ObjectUtils.isEmpty(serviceDatabase))
+            return null;
 
         return serviceDatabase.
                 createServiceDomain().
@@ -28,7 +32,8 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
     @Override
     public List<ServiceDomain> getByActive(Long contractID, boolean active) {
 
-        List<ServiceDatabase> list = serviceJPARepository.getByActiveAndContractID(active, contractID);
+        List<ServiceDatabase> list = serviceJPARepository.
+                getByActiveAndContractIDOrderByName(active, contractID);
 
         if (Objects.isNull(list))
             return new ArrayList<>();

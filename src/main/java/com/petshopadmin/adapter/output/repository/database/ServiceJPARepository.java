@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ServiceJPARepository extends JpaRepository<ServiceDatabase, Long> {
 
-    ServiceDatabase getByIDAndContractID(Long contractID, Long ID);
+    ServiceDatabase getByIDAndContractID(Long ID, Long contractID);
 
-    List<ServiceDatabase> getByActiveAndContractID(boolean active, Long contractID);
+    List<ServiceDatabase> getByActiveAndContractIDOrderByName(boolean active, Long contractID);
 }

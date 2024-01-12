@@ -5,6 +5,7 @@ import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,12 @@ public class ServiceService implements ServiceUserCase {
     @Override
     public ServiceDomain getByID(Long contractID, Long ID) throws NotFoundException, InternalServerErrorException {
 
-        if (Objects.isNull(contractID) || Objects.isNull(ID)) {
+        if (ObjectUtils.isEmpty(contractID) || ObjectUtils.isEmpty(ID)) {
             throw new InternalServerErrorException(ServiceService.SERVICE_INTERNAL_SERVER_ERROR);
         }
 
         ServiceDomain serviceDomain = serviceRepositoryDatabase.getByID(contractID, ID);
-        if (Objects.isNull(serviceDomain.getId())) {
+        if (ObjectUtils.isEmpty(serviceDomain)) {
             throw new NotFoundException(ServiceService.SERVICE_NOT_FOUND);
         }
 

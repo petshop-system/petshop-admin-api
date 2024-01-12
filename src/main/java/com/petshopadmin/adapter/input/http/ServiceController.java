@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class ServiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = {"", "/"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseHTTP getActives(@RequestParam(value = "active") boolean active,
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
@@ -45,7 +46,7 @@ public class ServiceController {
         List<ServiceResponseHTTP> result = new ArrayList<>();
         list.stream().forEach(serviceDomain -> result.add(new ServiceResponseHTTP(serviceDomain)));
 
-        return new ResponseHTTP("success to get service actives", result, LocalDateTime.now());
+        return new ResponseHTTP("success to get services", result, LocalDateTime.now());
 
     }
 
