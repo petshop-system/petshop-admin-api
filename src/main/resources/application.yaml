@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: petshop-admin-api
+  web:
+    resources:
+      add-mappings: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+      enabled-by-default: true
+
+server:
+  port: 5002
+  servlet:
+    context-path: /petshop-admin-api
+    encoding:
+      charset: UTF-8
+      enabled: true
+  max-http-request-header-size: 48000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/petshop-system
+    username: petshop-system
+    password: test1234
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+#    hibernate:
+#      ddl-auto: create-drop
+  sql:
+    init:
+      mode: always
+      platform: postgres
+
+redis:
+  host: localhost
+  port: 6379
