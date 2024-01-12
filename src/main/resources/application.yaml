@@ -48,3 +48,29 @@ spring:
 redis:
   host: localhost
   port: 6379
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/petshop-system
+    username: petshop-system
+    password: test1234
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+  #    hibernate:
+  #      ddl-auto: create-drop
+  sql:
+    init:
+      mode: always
+      platform: postgres
+
+redis:
+  host: redis
+  port: 6379

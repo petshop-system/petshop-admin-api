@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 public class ServiceServiceTest {
@@ -67,6 +69,18 @@ public class ServiceServiceTest {
         });
 
         Assertions.assertEquals(ServiceService.SERVICE_NOT_FOUND, ex.getMessage());
+    }
+
+    @Test
+    public void getByActiveShouldReturnAny() throws NotFoundException, InternalServerErrorException {
+
+        List<ServiceDomain> expectedResult = new ArrayList<>();
+        expectedResult.add(this.getDefaultServiceDomain());
+        Mockito.when(serviceRepositoryDatabase.getByActive(Mockito.anyLong(), Mockito.anyBoolean()))
+                .thenReturn(expectedResult);
+        List<ServiceDomain> list = this.getServiceService().getByActive(Mockito.anyLong(), Mockito.anyBoolean());
+        Assertions.assertTrue(list.size() > 0);
+
     }
 
 }

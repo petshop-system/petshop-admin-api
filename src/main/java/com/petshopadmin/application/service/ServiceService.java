@@ -40,6 +40,10 @@ public class ServiceService implements ServiceUserCase {
     @Override
     public List<ServiceDomain> getByActive(Long contractID, boolean active) throws InternalServerErrorException {
 
+        if (ObjectUtils.isEmpty(contractID)) {
+            throw new InternalServerErrorException(ServiceService.SERVICE_INTERNAL_SERVER_ERROR);
+        }
+
         List<ServiceDomain> list = serviceRepositoryDatabase.getByActive(contractID, active);
         if (Objects.isNull(list)) {
             list = new ArrayList<>();
