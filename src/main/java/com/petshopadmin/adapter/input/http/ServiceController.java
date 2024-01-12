@@ -32,7 +32,7 @@ public class ServiceController {
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
         ServiceDomain serviceDomain = serviceUserCase.getByID(contractID, serviceID);
-        return new ResponseHTTP("success to get service by id", new ServiceResponseHTTP(serviceDomain), LocalDateTime.now());
+        return new ResponseHTTP("success to get service by id", new ServiceResponseHTTP(serviceDomain), null, LocalDateTime.now());
 
     }
 
@@ -46,7 +46,7 @@ public class ServiceController {
         List<ServiceResponseHTTP> result = new ArrayList<>();
         list.stream().forEach(serviceDomain -> result.add(new ServiceResponseHTTP(serviceDomain)));
 
-        return new ResponseHTTP("success to get services", result, LocalDateTime.now());
+        return new ResponseHTTP("success to get services", null, result, LocalDateTime.now());
 
     }
 

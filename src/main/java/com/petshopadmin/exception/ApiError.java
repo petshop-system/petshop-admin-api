@@ -17,6 +17,7 @@ public class ApiError extends ResponseHTTP {
     public ApiError(Map<String, Object> message) {
         super(message.get("message").toString(),
                 null,
+                null,
                 LocalDateTime.now());
     }
 
