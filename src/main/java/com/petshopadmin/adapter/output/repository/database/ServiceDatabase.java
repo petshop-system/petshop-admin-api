@@ -1,6 +1,5 @@
 package com.petshopadmin.adapter.output.repository.database;
 
-import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
