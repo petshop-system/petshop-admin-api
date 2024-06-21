@@ -1,8 +1,10 @@
 package com.petshopadmin.adapter.output.repository.database;
 
+import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,8 +47,19 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
 
     @Override
     public ServiceDomain save(ServiceDomain serviceDomain) {
+
         ServiceDatabase serviceDatabase = new ServiceDatabase(serviceDomain);
+
+        if (serviceDomain.getContract() != null && serviceDomain.getContract().getId() != null) {
+            ContractDatabase contractDatabase = new ContractDatabase();
+            contractDatabase.setID(serviceDomain.getContract().getId());
+
+            serviceDatabase.setContract(contractDatabase);
+        }
+
+
         ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
+
         return savedService.createServiceDomain().build();
     }
 
