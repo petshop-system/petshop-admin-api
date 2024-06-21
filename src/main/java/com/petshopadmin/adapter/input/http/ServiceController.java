@@ -1,6 +1,7 @@
 package com.petshopadmin.adapter.input.http;
 
 import com.petshopadmin.adapter.output.repository.database.ServiceDatabase;
+import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
@@ -60,7 +61,13 @@ public class ServiceController {
         serviceDomain.setPrice(serviceRequestHTTP.price());
         serviceDomain.setActive(serviceRequestHTTP.active());
         serviceDomain.setDescription(serviceRequestHTTP.description());
+
+        ContractDomain contract = new ContractDomain();
+        contract.setId(serviceRequestHTTP.contractId());
+        serviceDomain.setContract(contract);
         ServiceDomain created = serviceUserCase.create(serviceDomain);
+
+
         return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
     }
 
