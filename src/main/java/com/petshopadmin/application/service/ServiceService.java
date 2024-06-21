@@ -7,6 +7,7 @@ import com.petshopadmin.application.port.output.database.ServiceRepositoryDataba
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -61,6 +62,7 @@ public class ServiceService implements ServiceUserCase {
     }
 
     @Override
+    @Transactional
     public ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException,InternalServerErrorException {
         if (ObjectUtils.isEmpty(serviceDomain)) {
             throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
@@ -80,6 +82,13 @@ public class ServiceService implements ServiceUserCase {
         if (serviceDomain.getDescription().length() > 255) {
             throw new IllegalArgumentException(ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION);
         }
+        if (Objects.isNull(serviceDomain.getContract().getId())) {
+            throw new InternalServerErrorException("Contract ID cannot be null");
+        }
+
+
+
+
 
         return serviceRepositoryDatabase.save(serviceDomain);
     }
