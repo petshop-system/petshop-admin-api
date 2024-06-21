@@ -1,5 +1,6 @@
 package com.petshopadmin.adapter.input.http;
 
+import com.petshopadmin.adapter.output.repository.database.ServiceDatabase;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
@@ -48,6 +49,19 @@ public class ServiceController {
 
         return new ResponseHTTP("success to get services", null, result, LocalDateTime.now());
 
+    }
+
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException, IllegalArgumentException {
+        ServiceDomain serviceDomain = new ServiceDomain();
+        serviceDomain.setName(serviceRequestHTTP.name());
+        serviceDomain.setPrice(serviceRequestHTTP.price());
+        serviceDomain.setActive(serviceRequestHTTP.active());
+        serviceDomain.setDescription(serviceRequestHTTP.description());
+        ServiceDomain created = serviceUserCase.create(serviceDomain);
+        return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
     }
 
 }
