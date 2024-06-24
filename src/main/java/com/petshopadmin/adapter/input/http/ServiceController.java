@@ -6,6 +6,7 @@ import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import jakarta.websocket.server.PathParam;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,11 @@ import java.util.List;
 public class ServiceController {
 
     private final ServiceUserCase serviceUserCase;
+    private final ServiceConverterMapper converterMapper;
 
-    public ServiceController (ServiceUserCase serviceUserCase) {
+    public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper converterMapper) {
         this.serviceUserCase = serviceUserCase;
+        this.converterMapper = converterMapper;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -56,17 +59,8 @@ public class ServiceController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException, IllegalArgumentException {
-        ServiceDomain serviceDomain = new ServiceDomain();
-        serviceDomain.setName(serviceRequestHTTP.name());
-        serviceDomain.setPrice(serviceRequestHTTP.price());
-        serviceDomain.setActive(serviceRequestHTTP.active());
-        serviceDomain.setDescription(serviceRequestHTTP.description());
-
-        ContractDomain contract = new ContractDomain();
-        contract.setId(serviceRequestHTTP.contractId());
-        serviceDomain.setContract(contract);
+        ServiceDomain serviceDomain = converterMapper.toServiceDomain(serviceRequestHTTP);
         ServiceDomain created = serviceUserCase.create(serviceDomain);
-
 
         return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
     }
