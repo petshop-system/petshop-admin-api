@@ -4,6 +4,7 @@ import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 
+
 import java.util.List;
 
 public interface ServiceUserCase {
@@ -13,5 +14,7 @@ public interface ServiceUserCase {
 
     List<ServiceDomain> getByActive(Long contractID, boolean active)
             throws NotFoundException, InternalServerErrorException;
+
+    ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException, InternalServerErrorException, IllegalArgumentException;
 
 }

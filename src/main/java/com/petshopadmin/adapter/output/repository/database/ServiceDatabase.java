@@ -61,6 +61,14 @@ public class ServiceDatabase implements Serializable {
         return this;
     }
 
+
+    public ServiceDatabase(ServiceDomain serviceDomain) {
+        this.name = serviceDomain.getName();
+        this.price = serviceDomain.getPrice();
+        this.active = serviceDomain.isActive();
+        this.description = serviceDomain.getDescription();
+    }
+
     ServiceDatabase addContract() {
         if (!Objects.isNull(this.contract)) {
             this.serviceDomain.setContract(this.contract.toContractDomain());

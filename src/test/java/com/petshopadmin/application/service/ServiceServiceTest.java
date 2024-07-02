@@ -1,5 +1,6 @@
 package com.petshopadmin.application.service;
 
+import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
@@ -83,4 +84,51 @@ public class ServiceServiceTest {
 
     }
 
+    @Test
+    public void createServiceWithNullServiceDomain() {
+        Assertions.assertThrows(InternalServerErrorException.class, () -> {
+            getServiceService().create(null);
+        });
+    }
+
+    @Test
+    public void createServiceWithTooLongNameOrDescription() {
+        String longString = "a".repeat(256);
+        ServiceDomain invalidName = new ServiceDomain();
+        invalidName.setName(longString);
+        invalidName.setDescription("validDescription");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            getServiceService().create(invalidName);
+        });
+
+        ServiceDomain invalidDescription = new ServiceDomain();
+        invalidDescription.setDescription(longString);
+        invalidDescription.setName("ValidName");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            getServiceService().create(invalidDescription);
+        });
+
+    }
+
+    @Test
+    public void createServiceWithContract() {
+        ContractDomain contract = new ContractDomain();
+        contract.setId(1L);
+
+        ServiceDomain service = new ServiceDomain();
+        service.setName("validName");
+        service.setDescription("validDescription");
+        service.setContract(contract);
+
+        Assertions.assertDoesNotThrow(() -> {
+            getServiceService().create(service);
+        });
+
+        try {
+            ServiceDomain createdService = getServiceService().create(service);
+            Assertions.assertEquals(contract.getId(), createdService.getContract().getId());
+        } catch (NotFoundException | InternalServerErrorException e) {
+            Assertions.fail("Exception thrown during service creation: " + e.getMessage());
+        }
+    }
 }

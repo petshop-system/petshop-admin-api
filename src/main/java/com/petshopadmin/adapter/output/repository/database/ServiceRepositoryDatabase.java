@@ -1,19 +1,24 @@
 package com.petshopadmin.adapter.output.repository.database;
 
+import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
+import com.petshopadmin.utils.converter.ServiceConverterMapper;
+import com.petshopadmin.utils.converter.ServiceConverterMapperImpl;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class ServiceRepositoryDatabase implements com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase {
 
     private final ServiceJPARepository serviceJPARepository;
+    private final ServiceConverterMapper converterMapper;
 
-    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository) {
+    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository, ServiceConverterMapper converterMapper) {
         this.serviceJPARepository = serviceJPARepository;
+        this.converterMapper = converterMapper;
     }
 
     @Override
@@ -43,4 +48,14 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
 
         return result;
     }
+
+    @Override
+    public ServiceDomain save(ServiceDomain serviceDomain) {
+
+        ServiceDatabase serviceDatabase = converterMapper.toServiceDatabase(serviceDomain);
+        ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
+        return savedService.createServiceDomain().build();
+    }
+
+
 }
