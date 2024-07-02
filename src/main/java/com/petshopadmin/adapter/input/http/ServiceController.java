@@ -57,7 +57,7 @@ public class ServiceController {
 
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException, IllegalArgumentException {
         ServiceDomain serviceDomain = converterMapper.toServiceDomain(serviceRequestHTTP);
         ServiceDomain created = serviceUserCase.create(serviceDomain);
