@@ -21,7 +21,7 @@ public class ServiceConverterMapperImpl implements ServiceConverterMapper{
         domain.setActive(source.active());
 
         ContractDomain contract = new ContractDomain();
-        contract.setId(source.contractId());
+        contract.setId(source.contractid());
 
         domain.setContract(contract);
         return domain;
