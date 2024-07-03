@@ -4,6 +4,7 @@ import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 
-public interface ValidationService {
+public interface ServiceValidation {
+
     void validateServiceDomain (ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException, NotFoundException;
 }
