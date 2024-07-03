@@ -4,6 +4,7 @@ import com.petshopadmin.adapter.output.repository.database.ServiceJPARepository;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.application.service.ServiceService;
+import com.petshopadmin.application.service.ValidationService;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +18,15 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    ServiceUserCase serviceUserCase (ServiceRepositoryDatabase serviceRepositoryDatabase) {
-        return new ServiceService(serviceRepositoryDatabase);
+    public ValidationService validationService() {
+        return new ValidationService();
     }
+
+    @Bean
+    ServiceUserCase serviceUserCase (ServiceRepositoryDatabase serviceRepositoryDatabase, ValidationService validationService) {
+        return new ServiceService(serviceRepositoryDatabase, validationService);
+    }
+
+
 
 }
