@@ -27,9 +27,11 @@ public class ServiceService implements ServiceUserCase {
     static String ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION = "Contract ID cannot be null or empty";
 
     private final ServiceRepositoryDatabase serviceRepositoryDatabase;
+    private final ValidationService validationService;
 
-    public ServiceService (ServiceRepositoryDatabase serviceRepositoryDatabase) {
+    public ServiceService (ServiceRepositoryDatabase serviceRepositoryDatabase, ValidationService validationService) {
         this.serviceRepositoryDatabase = serviceRepositoryDatabase;
+        this.validationService = validationService;
     }
 
     @Override
@@ -63,38 +65,11 @@ public class ServiceService implements ServiceUserCase {
     }
 
     @Override
-    @Transactional
     public ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException,InternalServerErrorException {
-        validateServiceDomain(serviceDomain);
+        validationService.validateServiceDomain(serviceDomain);
 
         return serviceRepositoryDatabase.save(serviceDomain);
     }
 
-    private void validateServiceDomain(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException, NotFoundException {
-        if (ObjectUtils.isEmpty(serviceDomain)) {
-            throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
-        }
-        if (ObjectUtils.isEmpty(serviceDomain.getName().trim())) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_NAME_EXCEPTION);
-        }
-        if (serviceDomain.getName().length() > 255) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION);
-        }
-        if (ObjectUtils.isEmpty(serviceDomain.getPrice()) || serviceDomain.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_PRICE_EXCEPTION);
-        }
-        if (!serviceDomain.isActive()) {
-            throw new NotFoundException(SERVICE_NOT_FOUND);
-        }
-        if (ObjectUtils.isEmpty(serviceDomain.getDescription().trim())) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION);
-        }
-        if (serviceDomain.getDescription().length() > 255) {
-            throw new IllegalArgumentException(ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION);
-        }
-        if (ObjectUtils.isEmpty(serviceDomain.getContract()) || ObjectUtils.isEmpty(serviceDomain.getContract().getId())) {
-            throw new InternalServerErrorException(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
-        }
-    }
 
 }
