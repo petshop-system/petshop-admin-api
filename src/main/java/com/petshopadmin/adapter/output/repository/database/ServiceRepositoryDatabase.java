@@ -2,8 +2,8 @@ package com.petshopadmin.adapter.output.repository.database;
 
 import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
+import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
-import com.petshopadmin.utils.converter.ServiceConverterMapperImpl;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.time.LocalDateTime;
@@ -14,11 +14,13 @@ import java.util.Objects;
 public class ServiceRepositoryDatabase implements com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase {
 
     private final ServiceJPARepository serviceJPARepository;
-    private final ServiceConverterMapper converterMapper;
+    private final ServiceConverterMapper serviceConverterMapper;
+    private final ContractJPARepository contractJPARepository;
 
-    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository, ServiceConverterMapper converterMapper) {
+    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository, ContractJPARepository contractJPARepository, ServiceConverterMapper serviceConverterMapper) {
         this.serviceJPARepository = serviceJPARepository;
-        this.converterMapper = converterMapper;
+        this.contractJPARepository = contractJPARepository;
+        this.serviceConverterMapper = serviceConverterMapper;
     }
 
     @Override
@@ -50,9 +52,19 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
     }
 
     @Override
-    public ServiceDomain save(ServiceDomain serviceDomain) {
+    public ServiceDomain save(ServiceDomain serviceDomain){
+        ServiceDatabase serviceDatabase = serviceConverterMapper.toServiceDatabase(serviceDomain);
 
-        ServiceDatabase serviceDatabase = converterMapper.toServiceDatabase(serviceDomain);
+        ContractDatabase contractDatabase = null;
+        try {
+            contractDatabase = contractJPARepository.findById(serviceDomain.getContract().getId())
+                    .orElseThrow(() -> new NotFoundException("Contract not found"));
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        serviceDatabase.setContract(contractDatabase);
+
         ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
         return savedService.createServiceDomain().build();
     }
