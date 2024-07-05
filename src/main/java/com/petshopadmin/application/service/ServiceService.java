@@ -1,16 +1,13 @@
 package com.petshopadmin.application.service;
 
-import com.petshopadmin.adapter.output.repository.database.ServiceDatabase;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,12 +16,6 @@ public class ServiceService implements ServiceUserCase {
 
     static String SERVICE_NOT_FOUND = "service not found";
     static String SERVICE_INTERNAL_SERVER_ERROR = "service internal error";
-    static String ILLEGAL_ARGUMENT_NAME_EXCEPTION = "name cannot be null or empty";
-    static String ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION = "exceeds maximum length of 255 characters";
-    static String ILLEGAL_ARGUMENT_PRICE_EXCEPTION = "service price cannot be null or negative";
-    static String ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION = "description cannot be null or empty";
-    static String ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION = "description exceeds maximum length of 255 characters";
-    static String ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION = "Contract ID cannot be null or empty";
 
     private final ServiceRepositoryDatabase serviceRepositoryDatabase;
     private final ValidationService validationService;
