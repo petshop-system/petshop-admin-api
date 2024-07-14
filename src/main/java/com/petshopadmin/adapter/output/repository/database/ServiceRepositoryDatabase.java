@@ -1,8 +1,6 @@
 package com.petshopadmin.adapter.output.repository.database;
 
-import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
-import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -15,11 +13,9 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
 
     private final ServiceJPARepository serviceJPARepository;
     private final ServiceConverterMapper serviceConverterMapper;
-    private final ContractJPARepository contractJPARepository;
 
-    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository, ContractJPARepository contractJPARepository, ServiceConverterMapper serviceConverterMapper) {
+    public ServiceRepositoryDatabase (ServiceJPARepository serviceJPARepository, ServiceConverterMapper serviceConverterMapper) {
         this.serviceJPARepository = serviceJPARepository;
-        this.contractJPARepository = contractJPARepository;
         this.serviceConverterMapper = serviceConverterMapper;
     }
 
@@ -54,16 +50,6 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
     @Override
     public ServiceDomain save(ServiceDomain serviceDomain){
         ServiceDatabase serviceDatabase = serviceConverterMapper.toServiceDatabase(serviceDomain);
-
-        ContractDatabase contractDatabase = null;
-        try {
-            contractDatabase = contractJPARepository.findById(serviceDomain.getContract().getId())
-                    .orElseThrow(() -> new NotFoundException("Contract not found"));
-        } catch (NotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        serviceDatabase.setContract(contractDatabase);
 
         ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
         return savedService.createServiceDomain().build();
