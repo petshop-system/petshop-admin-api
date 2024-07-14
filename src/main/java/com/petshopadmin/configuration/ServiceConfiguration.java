@@ -3,6 +3,7 @@ package com.petshopadmin.configuration;
 import com.petshopadmin.adapter.output.repository.database.ContractJPARepository;
 import com.petshopadmin.adapter.output.repository.database.ServiceJPARepository;
 import com.petshopadmin.application.port.input.ServiceUserCase;
+import com.petshopadmin.application.port.output.database.ContractRepositoryDatabase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.application.service.ServiceService;
 import com.petshopadmin.application.service.ValidationService;
@@ -15,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceConfiguration {
 
     @Bean
-    ServiceRepositoryDatabase serviceRepositoryDatabase(ServiceJPARepository serviceJPARepository, ContractJPARepository contractJPARepository, ServiceConverterMapper serviceConverterMapper) {
-        return new com.petshopadmin.adapter.output.repository.database.ServiceRepositoryDatabase(serviceJPARepository, contractJPARepository, serviceConverterMapper);
+    ServiceRepositoryDatabase serviceRepositoryDatabase(ServiceJPARepository serviceJPARepository, ServiceConverterMapper serviceConverterMapper) {
+        return new com.petshopadmin.adapter.output.repository.database.ServiceRepositoryDatabase(serviceJPARepository, serviceConverterMapper);
     }
 
     @Bean
@@ -24,11 +25,16 @@ public class ServiceConfiguration {
         return new ServiceConverterMapperImpl();
     }
 
-
     @Bean
-    public ValidationService validationService() {
+    public ValidationService validationService(){
         return new ValidationService();
     }
+
+    @Bean
+    public ContractRepositoryDatabase contractRepositoryDatabase(ContractJPARepository contractJPARepository, ServiceConverterMapper serviceConverterMapper) {
+        return new com.petshopadmin.adapter.output.repository.database.ContractRepositoryDatabase(contractJPARepository, serviceConverterMapper);
+    }
+
 
     @Bean
     ServiceUserCase serviceUserCase (ServiceRepositoryDatabase serviceRepositoryDatabase, ValidationService validationService) {
