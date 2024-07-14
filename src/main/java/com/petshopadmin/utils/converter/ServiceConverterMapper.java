@@ -16,5 +16,7 @@ public interface ServiceConverterMapper {
 
     @Mapping(target = "ID", source = "contract.id")
     ServiceDatabase toServiceDatabase(ServiceDomain source);
-    
+
+    @Mapping(target = "ID", source = "id")
+    ContractDatabase toContractDatabse(ContractDomain source);
 }
