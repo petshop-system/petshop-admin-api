@@ -17,4 +17,5 @@ public interface ServiceUserCase {
 
     ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException, InternalServerErrorException, IllegalArgumentException;
 
+    void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException;
 }
