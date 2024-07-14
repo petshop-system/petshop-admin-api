@@ -7,7 +7,6 @@ import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import org.apache.commons.lang3.ObjectUtils;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,11 +55,15 @@ public class ServiceService implements ServiceUserCase {
     }
 
     @Override
-    public ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException,InternalServerErrorException {
-        validationService.validateServiceDomain(serviceDomain);
+    public ServiceDomain create(ServiceDomain serviceDomain) throws InternalServerErrorException {
+
+        validationService.validate(serviceDomain);
 
         return serviceRepositoryDatabase.save(serviceDomain);
     }
 
-
+    @Override
+    public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException {
+        validationService.validate(serviceDomain);
+    }
 }
