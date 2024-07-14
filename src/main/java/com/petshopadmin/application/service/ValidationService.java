@@ -46,9 +46,6 @@ public class ValidationService  {
         if (ObjectUtils.isEmpty(serviceDomain.getContract().getId())) {
             errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
         }
-        if (ObjectUtils.isEmpty(serviceDomain.getContract())) {
-            errors.add("contrato inexistente");
-        }
 
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errors));
