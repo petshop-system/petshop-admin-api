@@ -3,7 +3,6 @@ package com.petshopadmin.adapter.input.http;
 import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
-import com.petshopadmin.application.port.output.database.ContractRepositoryDatabase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
@@ -21,12 +20,10 @@ public class ServiceController {
 
     private final ServiceUserCase serviceUserCase;
     private final ServiceConverterMapper serviceConverterMapper;
-    private final ContractRepositoryDatabase contractRepositoryDatabase;
 
-    public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper converterMapper, ContractRepositoryDatabase contractRepositoryDatabase) {
+    public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper converterMapper) {
         this.serviceUserCase = serviceUserCase;
         this.serviceConverterMapper = converterMapper;
-        this.contractRepositoryDatabase = contractRepositoryDatabase;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -59,10 +56,8 @@ public class ServiceController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException, IllegalArgumentException {
         try {
+            ContractDomain contractDomain = serviceConverterMapper.toContractDomain(serviceRequestHTTP.contractid());
 
-            Long contractId = serviceRequestHTTP.contractid();
-            ContractDomain contractDomain = contractRepositoryDatabase.getById(contractId);
-            
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
             serviceDomain.setContract(contractDomain);
 
