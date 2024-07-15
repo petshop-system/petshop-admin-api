@@ -8,6 +8,7 @@ import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +59,7 @@ public class ServiceController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException, IllegalArgumentException {
+    public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
             ContractDomain contractDomain = serviceConverterMapper.toContractDomain(serviceRequestHTTP.contractid());
 
@@ -74,7 +75,17 @@ public class ServiceController {
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseHTTP validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws InternalServerErrorException {
+        try {
+            ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
+            serviceUserCase.validate(serviceDomain);
+            return new ResponseHTTP("Validation successful", null, null, LocalDateTime.now());
+        } catch (ValidationException e) {
+            return new ResponseHTTP("Validation Errors", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
+        }
 
-
+    }
 
 }
