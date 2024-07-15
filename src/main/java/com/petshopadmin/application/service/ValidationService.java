@@ -25,25 +25,39 @@ public class ValidationService  {
         if (ObjectUtils.isEmpty(serviceDomain)) {
             throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
         }
-        if (ObjectUtils.isEmpty(serviceDomain.getName().trim())) {
+        if (ObjectUtils.allNotNull(serviceDomain, serviceDomain.getName()) &&
+                !serviceDomain.getName().trim().isEmpty()) {
+            serviceDomain.setName(serviceDomain.getName().trim());
+        }
+        else {
             errors.add(ILLEGAL_ARGUMENT_NAME_EXCEPTION);
         }
-        if (serviceDomain.getName().length() > 255) {
+        if (ObjectUtils.allNotNull(serviceDomain, serviceDomain.getName()) &&
+                serviceDomain.getName().length() < 255) {
+        } else {
             errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION);
         }
-        if (ObjectUtils.isEmpty(serviceDomain.getPrice()) || serviceDomain.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+        if (ObjectUtils.allNotNull(serviceDomain, serviceDomain.getPrice()) && serviceDomain.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+        } else {
             errors.add(ILLEGAL_ARGUMENT_PRICE_EXCEPTION);
         }
-        if (!serviceDomain.isActive()) {
+        if (ObjectUtils.isNotEmpty(serviceDomain) && serviceDomain.isActive()) {
+        } else {
             errors.add(SERVICE_NOT_FOUND);
         }
-        if (ObjectUtils.isEmpty(serviceDomain.getDescription().trim())) {
+        if (serviceDomain != null && serviceDomain.getDescription() != null && !serviceDomain.getDescription().trim().isEmpty()) {
+            serviceDomain.setDescription(serviceDomain.getDescription().trim());
+        }
+        else {
             errors.add(ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION);
         }
-        if (serviceDomain.getDescription().length() > 255) {
+        if (ObjectUtils.allNotNull(serviceDomain, serviceDomain.getDescription()) &&
+                serviceDomain.getDescription().length() < 255) {
+        } else {
             errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION);
         }
-        if (ObjectUtils.isEmpty(serviceDomain.getContract().getId())) {
+        if (ObjectUtils.isNotEmpty(serviceDomain.getContract().getId())) {
+        } else {
             errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
         }
 
