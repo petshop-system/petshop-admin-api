@@ -3,8 +3,10 @@ package com.petshopadmin.adapter.input.http;
 import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ServiceUserCase;
+import com.petshopadmin.application.service.ValidationService;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import com.petshopadmin.exception.ValidationException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -24,6 +27,7 @@ public class ServiceController {
     public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper converterMapper) {
         this.serviceUserCase = serviceUserCase;
         this.serviceConverterMapper = converterMapper;
+
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -65,8 +69,8 @@ public class ServiceController {
 
             ServiceDomain created = serviceUserCase.create(serviceDomain);
             return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
-        } catch (IllegalArgumentException e) {
-            return new ResponseHTTP("Errors found", e.getMessage(), null, LocalDateTime.now());
+        } catch (ValidationException e) {
+            return new ResponseHTTP("Errors found", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
         }
     }
 
