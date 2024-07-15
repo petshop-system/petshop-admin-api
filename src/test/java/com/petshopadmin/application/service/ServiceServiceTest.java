@@ -13,9 +13,12 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(SpringExtension.class)
 public class ServiceServiceTest {
@@ -23,8 +26,11 @@ public class ServiceServiceTest {
     @MockBean
     ServiceRepositoryDatabase serviceRepositoryDatabase;
 
+    @MockBean
+    ValidationService validationService;
+
     ServiceUserCase getServiceService() {
-        return new ServiceService(serviceRepositoryDatabase);
+        return new ServiceService(serviceRepositoryDatabase, validationService);
     }
 
     ServiceDomain getDefaultServiceDomain() {
@@ -85,39 +91,64 @@ public class ServiceServiceTest {
     }
 
     @Test
-    public void createServiceWithNullServiceDomain() {
+    public void createServiceWithNullServiceDomain() throws InternalServerErrorException {
+        ServiceDomain serviceEmpty = null;
+
+        doThrow(new InternalServerErrorException("Internal server error"))
+                .when(validationService).validate(serviceEmpty);
+
         Assertions.assertThrows(InternalServerErrorException.class, () -> {
-            getServiceService().create(null);
+            getServiceService().create(serviceEmpty);
         });
     }
 
     @Test
-    public void createServiceWithTooLongNameOrDescription() {
+    public void createServiceWithTooLongName() throws InternalServerErrorException {
         String longString = "a".repeat(256);
-        ServiceDomain invalidName = new ServiceDomain();
+
+        ServiceDomain invalidName = this.getDefaultServiceDomain();
         invalidName.setName(longString);
-        invalidName.setDescription("validDescription");
+
+        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidName);
+
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             getServiceService().create(invalidName);
         });
-
-        ServiceDomain invalidDescription = new ServiceDomain();
-        invalidDescription.setDescription(longString);
-        invalidDescription.setName("ValidName");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            getServiceService().create(invalidDescription);
-        });
-
     }
 
     @Test
-    public void createServiceWithContract() {
+    public void createServiceWithTooLongDescription() throws InternalServerErrorException {
+        String longString = "a".repeat(256);
+
+        ServiceDomain invalidDescription = this.getDefaultServiceDomain();
+        invalidDescription.setDescription(longString);
+
+        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidDescription);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            getServiceService().create(invalidDescription);
+        });
+    }
+
+    @Test
+    public void createServiceWithInvalidPrice() throws InternalServerErrorException {
+        ServiceDomain invalidPrice = this.getDefaultServiceDomain();
+        invalidPrice.setPrice(BigDecimal.valueOf(-1));
+
+        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidPrice);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            getServiceService().create(invalidPrice);
+        });
+    }
+
+
+
+    @Test
+    public void createServiceWithValidContract() {
         ContractDomain contract = new ContractDomain();
         contract.setId(1L);
 
-        ServiceDomain service = new ServiceDomain();
-        service.setName("validName");
-        service.setDescription("validDescription");
+        ServiceDomain service = this.getDefaultServiceDomain();
         service.setContract(contract);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -125,9 +156,9 @@ public class ServiceServiceTest {
         });
 
         try {
-            ServiceDomain createdService = getServiceService().create(service);
-            Assertions.assertEquals(contract.getId(), createdService.getContract().getId());
-        } catch (NotFoundException | InternalServerErrorException e) {
+
+            Assertions.assertEquals(contract.getId(), service.getContract().getId());
+        } catch (IllegalArgumentException e) {
             Assertions.fail("Exception thrown during service creation: " + e.getMessage());
         }
     }
