@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.doThrow;
+
 
 @ExtendWith(SpringExtension.class)
 public class ServiceServiceTest {
@@ -94,7 +94,7 @@ public class ServiceServiceTest {
     public void createServiceWithNullServiceDomain() throws InternalServerErrorException {
         ServiceDomain serviceEmpty = null;
 
-        doThrow(new InternalServerErrorException("Internal server error"))
+        Mockito.doThrow(new InternalServerErrorException("Internal server error"))
                 .when(validationService).validate(serviceEmpty);
 
         Assertions.assertThrows(InternalServerErrorException.class, () -> {
@@ -109,7 +109,7 @@ public class ServiceServiceTest {
         ServiceDomain invalidName = this.getDefaultServiceDomain();
         invalidName.setName(longString);
 
-        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidName);
+        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidName);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             getServiceService().create(invalidName);
@@ -123,7 +123,7 @@ public class ServiceServiceTest {
         ServiceDomain invalidDescription = this.getDefaultServiceDomain();
         invalidDescription.setDescription(longString);
 
-        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidDescription);
+        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidDescription);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             getServiceService().create(invalidDescription);
@@ -135,7 +135,7 @@ public class ServiceServiceTest {
         ServiceDomain invalidPrice = this.getDefaultServiceDomain();
         invalidPrice.setPrice(BigDecimal.valueOf(-1));
 
-        doThrow(new IllegalArgumentException()).when(validationService).validate(invalidPrice);
+        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidPrice);
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             getServiceService().create(invalidPrice);
         });
