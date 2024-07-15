@@ -3,6 +3,7 @@ package com.petshopadmin.application.port.input;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import com.petshopadmin.exception.ValidationException;
 
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ServiceUserCase {
     List<ServiceDomain> getByActive(Long contractID, boolean active)
             throws NotFoundException, InternalServerErrorException;
 
-    ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException, InternalServerErrorException, IllegalArgumentException;
+    ServiceDomain create(ServiceDomain serviceDomain) throws NotFoundException, InternalServerErrorException, ValidationException;
 
-    void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException;
+    void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException;
 }

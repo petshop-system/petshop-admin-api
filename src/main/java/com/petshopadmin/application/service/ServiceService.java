@@ -5,6 +5,7 @@ import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import com.petshopadmin.exception.ValidationException;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class ServiceService implements ServiceUserCase {
     }
 
     @Override
-    public ServiceDomain create(ServiceDomain serviceDomain) throws InternalServerErrorException {
+    public ServiceDomain create(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
 
         validationService.validate(serviceDomain);
 
@@ -63,7 +64,7 @@ public class ServiceService implements ServiceUserCase {
     }
 
     @Override
-    public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException {
+    public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
         validationService.validate(serviceDomain);
     }
 }

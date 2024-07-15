@@ -2,7 +2,9 @@ package com.petshopadmin.application.service;
 
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.exception.InternalServerErrorException;
+import com.petshopadmin.exception.ValidationException;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class ValidationService  {
     static String ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION = "description exceeds maximum length of 255 characters";
     static String ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION = "Contract ID cannot be null or empty";
 
-    public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, IllegalArgumentException {
+    public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
         List<String> errors = new ArrayList<>();
 
         if (ObjectUtils.isEmpty(serviceDomain)) {
@@ -62,7 +64,7 @@ public class ValidationService  {
         }
 
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException(String.join(", ", errors));
+            throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
         }
     }
 }
