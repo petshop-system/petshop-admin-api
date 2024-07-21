@@ -30,6 +30,8 @@ public class ContractDatabase implements Serializable {
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
+    public ContractDatabase(ContractDomain contractDomain) {}
+
     ContractDomain toContractDomain () {
 
         ContractDomain contractDomain = new ContractDomain();
