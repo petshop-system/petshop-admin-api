@@ -1,27 +1,25 @@
 package com.petshopadmin.adapter.output.repository.database;
 
 import com.petshopadmin.application.domain.ContractDomain;
-import com.petshopadmin.exception.NotFoundException;
-import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.Optional;
 
 public class ContractRepositoryDatabase implements com.petshopadmin.application.port.output.database.ContractRepositoryDatabase {
     public final ContractJPARepository contractJPARepository;
-    public final ServiceConverterMapper serviceConverterMapper;
 
-    public ContractRepositoryDatabase (ContractJPARepository contractJPARepository, ServiceConverterMapper serviceConverterMapper) {
+    public ContractRepositoryDatabase (ContractJPARepository contractJPARepository) {
         this.contractJPARepository = contractJPARepository;
-        this.serviceConverterMapper = serviceConverterMapper;
     }
 
     @Override
-    public ContractDomain getById(Long id){
+    public ContractDomain getById(Long id) {
+        Optional<ContractDatabase> contract = contractJPARepository.findById(id);
 
-        ContractDatabase contractDatabase = contractJPARepository.getById(id);
-
-        if (ObjectUtils.isEmpty(contractDatabase)) {
+        if (ObjectUtils.isEmpty(contract)) {
             return null;
         }
-        return contractDatabase.toContractDomain();
+
+        return contract.get().toContractDomain();
     }
 }
