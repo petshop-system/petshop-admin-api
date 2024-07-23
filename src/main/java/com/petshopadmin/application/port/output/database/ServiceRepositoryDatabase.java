@@ -1,6 +1,5 @@
 package com.petshopadmin.application.port.output.database;
 
-import com.petshopadmin.adapter.output.repository.database.ServiceDatabase;
 import com.petshopadmin.application.domain.ServiceDomain;
 
 import java.util.List;
