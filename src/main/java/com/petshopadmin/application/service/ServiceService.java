@@ -7,22 +7,31 @@ import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 
 public class ServiceService implements ServiceUserCase {
 
     static String SERVICE_NOT_FOUND = "service not found";
     static String SERVICE_INTERNAL_SERVER_ERROR = "service internal error";
+    static String ILLEGAL_ARGUMENT_NAME_EXCEPTION = "name cannot be null or empty";
+    static String ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION = "exceeds maximum length of 255 characters";
+    static String ILLEGAL_ARGUMENT_PRICE_EXCEPTION = "service price cannot be null";
+    static String ILLEGAL_ARGUMENT_PRICE_NEGATIVE_EXCEPTION = "service price cannot be negative";
+    static String ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION = "description cannot be null or empty";
+    static String ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION = "description exceeds maximum length of 255 characters";
+    static String ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION = "Contract ID cannot be null or empty";
 
     private final ServiceRepositoryDatabase serviceRepositoryDatabase;
-    private final ValidationService validationService;
 
-    public ServiceService (ServiceRepositoryDatabase serviceRepositoryDatabase, ValidationService validationService) {
+    public ServiceService(ServiceRepositoryDatabase serviceRepositoryDatabase) {
         this.serviceRepositoryDatabase = serviceRepositoryDatabase;
-        this.validationService = validationService;
     }
 
     @Override
@@ -57,14 +66,52 @@ public class ServiceService implements ServiceUserCase {
 
     @Override
     public ServiceDomain create(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
-
-        validationService.validate(serviceDomain);
-
+        this.validate(serviceDomain);
         return serviceRepositoryDatabase.save(serviceDomain);
     }
 
     @Override
     public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
-        validationService.validate(serviceDomain);
+        List<String> errors = new ArrayList<>();
+
+        if (serviceDomain == null) {
+            throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
+        }
+
+        String name = StringUtils.trimToEmpty(serviceDomain.getName());
+        if (ObjectUtils.isEmpty(name)) {
+            errors.add(ILLEGAL_ARGUMENT_NAME_EXCEPTION);
+        } else if (name.length() > 255) {
+            errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION);
+        } else {
+            serviceDomain.setName(name);
+        }
+
+        String description = StringUtils.trimToEmpty(serviceDomain.getDescription());
+        if (ObjectUtils.isEmpty(description)) {
+            errors.add(ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION);
+        } else if (description.length() > 255) {
+            errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION);
+        } else {
+            serviceDomain.setDescription(description);
+        }
+
+        if (ObjectUtils.isEmpty(serviceDomain.getPrice())) {
+            errors.add(ILLEGAL_ARGUMENT_PRICE_EXCEPTION);
+        } else if (serviceDomain.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add(ILLEGAL_ARGUMENT_PRICE_NEGATIVE_EXCEPTION);
+        }
+
+        if (!serviceDomain.isActive()){
+            errors.add(SERVICE_NOT_FOUND);
+        }
+
+        if (ObjectUtils.anyNull(serviceDomain.getContract(), serviceDomain.getContract().getId())) {
+            errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
+        }
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
+        }
     }
 }
