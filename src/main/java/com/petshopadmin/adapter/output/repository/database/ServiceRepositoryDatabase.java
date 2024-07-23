@@ -60,7 +60,7 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
 
         ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
 
-        return savedService.createServiceDomain().addContract().build();
+        return savedService.createServiceDomain().build();
     }
 
 
