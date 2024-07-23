@@ -1,7 +1,5 @@
 package com.petshopadmin.adapter.input.http;
 
-
-
 import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ContractUserCase;
@@ -9,6 +7,7 @@ import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
+import com.petshopadmin.utils.converter.ContractConverterMapper;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +24,14 @@ import java.util.List;
 public class ServiceController {
 
     private final ServiceUserCase serviceUserCase;
-    private final ContractUserCase contractUserCase;
     private final ServiceConverterMapper serviceConverterMapper;
+    private final ContractUserCase contractUserCase;
 
-    public ServiceController (ServiceUserCase serviceUserCase, ContractUserCase contractUserCase, ServiceConverterMapper converterMapper) {
+    public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper serviceConverterMapper,
+                              ContractUserCase contractUserCase) {
         this.serviceUserCase = serviceUserCase;
+        this.serviceConverterMapper = serviceConverterMapper;
         this.contractUserCase = contractUserCase;
-        this.serviceConverterMapper = converterMapper;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -64,7 +64,9 @@ public class ServiceController {
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
-            ContractDomain contract = contractUserCase.getById(serviceDomain.getContract().getId());
+
+            ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
+            serviceDomain.setContract(contractDomain);
 
             ServiceDomain created = serviceUserCase.create(serviceDomain);
             return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
@@ -75,12 +77,14 @@ public class ServiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "/validate-create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws InternalServerErrorException {
+    public ResponseEntity validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
+
+            ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
+            serviceDomain.setContract(contractDomain);
             serviceUserCase.validate(serviceDomain);
 
-            serviceUserCase.validate(serviceDomain);
             ResponseHTTP responseHTTP = new ResponseHTTP("Validation successful", null, null, LocalDateTime.now());
             return new ResponseEntity(responseHTTP, HttpStatus.OK);
         } catch (ValidationException e) {
