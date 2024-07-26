@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 public class ContractConfiguration {
 
     @Bean
-    com.petshopadmin.adapter.output.repository.database.ContractRepositoryDatabase contractRepositoryDatabase(ContractJPARepository contractJPARepository){
+    ContractRepositoryDatabase contractRepositoryDatabase(ContractJPARepository contractJPARepository){
         return new ContractRepositoryDatabase(contractJPARepository);
     }
 
     @Bean
-    ContractUserCase contractUserCase(ContractRepositoryDatabase contractRepositoryDatabase) {
+    ContractUserCase contractUserCase(ContractRepositoryDatabase contractRepositoryDatabase){
         return  new ContractService(contractRepositoryDatabase);
     }
 
