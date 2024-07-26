@@ -72,33 +72,35 @@ public class ServiceService implements ServiceUserCase {
 
     @Override
     public void validate(ServiceDomain serviceDomain) throws InternalServerErrorException, ValidationException {
-        List<String> errors = new ArrayList<>();
-
         if (serviceDomain == null) {
             throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
         }
 
-        String name = StringUtils.trimToEmpty(serviceDomain.getName());
-        if (ObjectUtils.isEmpty(name)) {
+        List<String> errors = new ArrayList<>();
+
+       serviceDomain.setName(StringUtils.trimToEmpty(serviceDomain.getName()));
+        if (ObjectUtils.isEmpty(serviceDomain.getName())) {
             errors.add(ILLEGAL_ARGUMENT_NAME_EXCEPTION);
-        } else if (name.length() > 255) {
-            errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION);
-        } else {
-            serviceDomain.setName(name);
         }
 
-        String description = StringUtils.trimToEmpty(serviceDomain.getDescription());
-        if (ObjectUtils.isEmpty(description)) {
+        if (serviceDomain.getName().length() > 255) {
+            errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_NAME_EXCEPTION);
+        }
+
+        serviceDomain.setDescription(StringUtils.trimToEmpty(serviceDomain.getDescription()));
+        if (ObjectUtils.isEmpty(serviceDomain.getDescription())) {
             errors.add(ILLEGAL_ARGUMENT_DESCRIPTION_EXCEPTION);
-        } else if (description.length() > 255) {
+        }
+
+        if (serviceDomain.getDescription().length() > 255) {
             errors.add(ILLEGAL_ARGUMENT_CHARACTERS_MAX_DESCRIPTION_EXCEPTION);
-        } else {
-            serviceDomain.setDescription(description);
         }
 
         if (ObjectUtils.isEmpty(serviceDomain.getPrice())) {
             errors.add(ILLEGAL_ARGUMENT_PRICE_EXCEPTION);
-        } else if (serviceDomain.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+        }
+
+        if (serviceDomain.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             errors.add(ILLEGAL_ARGUMENT_PRICE_NEGATIVE_EXCEPTION);
         }
 
@@ -106,8 +108,8 @@ public class ServiceService implements ServiceUserCase {
             errors.add(SERVICE_NOT_FOUND);
         }
 
-        if (ObjectUtils.anyNull(serviceDomain.getContract(), serviceDomain.getContract().getId())) {
-            errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
+        if (ObjectUtils.anyNull(serviceDomain.getContract())) {
+            throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
         }
 
         if (!errors.isEmpty()) {
