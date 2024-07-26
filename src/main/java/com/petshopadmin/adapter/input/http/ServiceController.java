@@ -7,7 +7,6 @@ import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
-import com.petshopadmin.utils.converter.ContractConverterMapper;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -68,8 +67,8 @@ public class ServiceController {
             ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
             serviceDomain.setContract(contractDomain);
 
-            ServiceDomain created = serviceUserCase.create(serviceDomain);
-            return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(created), null, LocalDateTime.now());
+            serviceUserCase.create(serviceDomain);
+            return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(serviceDomain), null, LocalDateTime.now());
         } catch (ValidationException e) {
             return new ResponseHTTP("Errors found", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
         }
@@ -83,6 +82,7 @@ public class ServiceController {
 
             ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
             serviceDomain.setContract(contractDomain);
+
             serviceUserCase.validate(serviceDomain);
 
             ResponseHTTP responseHTTP = new ResponseHTTP("Validation successful", null, null, LocalDateTime.now());
