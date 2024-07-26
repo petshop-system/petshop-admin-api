@@ -53,11 +53,6 @@ public class ServiceRepositoryDatabase implements com.petshopadmin.application.p
         }
 
         ServiceDatabase serviceDatabase = new ServiceDatabase(serviceDomain, contractDatabase);
-
-        if (ObjectUtils.isEmpty(serviceDatabase)) {
-            return null;
-        }
-
         ServiceDatabase savedService = serviceJPARepository.save(serviceDatabase);
 
         return savedService.createServiceDomain().build();
