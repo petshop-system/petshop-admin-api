@@ -6,6 +6,7 @@ import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
+import com.petshopadmin.exception.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,17 +27,15 @@ public class ServiceServiceTest {
     @MockBean
     ServiceRepositoryDatabase serviceRepositoryDatabase;
 
-    @MockBean
-    ValidationService validationService;
-
     ServiceUserCase getServiceService() {
-        return new ServiceService(serviceRepositoryDatabase, validationService);
+        return new ServiceService(serviceRepositoryDatabase);
     }
 
     ServiceDomain getDefaultServiceDomain() {
         ServiceDomain domain = new ServiceDomain();
         domain.setId(1L);
         domain.setName("test");
+        domain.setActive(true);
         domain.setPrice(BigDecimal.TEN);
         domain.setDescription("test description");
         return domain;
@@ -91,75 +90,70 @@ public class ServiceServiceTest {
     }
 
     @Test
-    public void createServiceWithNullServiceDomain() throws InternalServerErrorException {
-        ServiceDomain serviceEmpty = null;
+    public void createServiceShouldThrowInternalServerError() {
+        ServiceDomain serviceDomain = null;
 
-        Mockito.doThrow(new InternalServerErrorException("Internal server error"))
-                .when(validationService).validate(serviceEmpty);
+        InternalServerErrorException ex = Assertions.assertThrows(InternalServerErrorException.class, () -> {
+            Mockito.when(serviceRepositoryDatabase.save(Mockito.any(ServiceDomain.class))).thenReturn(null);
 
-        Assertions.assertThrows(InternalServerErrorException.class, () -> {
-            getServiceService().create(serviceEmpty);
+            ServiceUserCase userCase = this.getServiceService();
+            userCase.create(serviceDomain);
         });
+
+        Assertions.assertEquals(ServiceService.SERVICE_INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @Test
-    public void createServiceWithTooLongName() throws InternalServerErrorException {
+    public void createServiceWithTooLongNameShouldThrowValidationException() {
+        ServiceDomain expectedResult = this.getDefaultServiceDomain();
+
         String longString = "a".repeat(256);
+        expectedResult.setName(longString);
 
-        ServiceDomain invalidName = this.getDefaultServiceDomain();
-        invalidName.setName(longString);
-
-        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidName);
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            getServiceService().create(invalidName);
+        Assertions.assertThrows(ValidationException.class, () -> {
+            ServiceUserCase userCase =  this.getServiceService();
+            userCase.create(expectedResult);
         });
     }
 
     @Test
-    public void createServiceWithTooLongDescription() throws InternalServerErrorException {
+    public void createServiceWithTooLongDescriptionShouldThrowValidationException() {
+        ServiceDomain expectedResult = this.getDefaultServiceDomain();
+
         String longString = "a".repeat(256);
+        expectedResult.setDescription(longString);
 
-        ServiceDomain invalidDescription = this.getDefaultServiceDomain();
-        invalidDescription.setDescription(longString);
 
-        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidDescription);
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            getServiceService().create(invalidDescription);
+        Assertions.assertThrows(ValidationException.class, () -> {
+            ServiceUserCase userCase = this.getServiceService();
+            userCase.create(expectedResult);
         });
     }
 
     @Test
-    public void createServiceWithInvalidPrice() throws InternalServerErrorException {
-        ServiceDomain invalidPrice = this.getDefaultServiceDomain();
-        invalidPrice.setPrice(BigDecimal.valueOf(-1));
+    public void createServiceWithInvalidPriceShouldThrowValidationException() {
+        ServiceDomain expectedResult = this.getDefaultServiceDomain();
+        expectedResult.setPrice(BigDecimal.valueOf(-1));
 
-        Mockito.doThrow(new IllegalArgumentException()).when(validationService).validate(invalidPrice);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            getServiceService().create(invalidPrice);
+        Assertions.assertThrows(ValidationException.class, () -> {
+            ServiceUserCase userCase = this.getServiceService();
+            userCase.create(expectedResult);
         });
     }
 
-
-
     @Test
-    public void createServiceWithValidContract() {
+    public void createServiceWithValidContractShouldReturnAny() throws ValidationException, NotFoundException, InternalServerErrorException {
+        ServiceDomain expectedResult = this.getDefaultServiceDomain();
+
         ContractDomain contract = new ContractDomain();
         contract.setId(1L);
+        expectedResult.setContract(contract);
 
-        ServiceDomain service = this.getDefaultServiceDomain();
-        service.setContract(contract);
+        Mockito.when(serviceRepositoryDatabase.save(Mockito.any(ServiceDomain.class))).thenReturn(expectedResult);
 
-        Assertions.assertDoesNotThrow(() -> {
-            getServiceService().create(service);
-        });
+        ServiceUserCase userCase = this.getServiceService();
+        ServiceDomain result = userCase.create(expectedResult);
+        Assertions.assertEquals(expectedResult, result);
 
-        try {
-
-            Assertions.assertEquals(contract.getId(), service.getContract().getId());
-        } catch (IllegalArgumentException e) {
-            Assertions.fail("Exception thrown during service creation: " + e.getMessage());
-        }
     }
 }
