@@ -108,8 +108,8 @@ public class ServiceService implements ServiceUserCase {
             errors.add(SERVICE_NOT_FOUND);
         }
 
-        if (ObjectUtils.anyNull(serviceDomain.getContract())) {
-            throw new InternalServerErrorException(SERVICE_INTERNAL_SERVER_ERROR);
+        if (ObjectUtils.isEmpty(serviceDomain.getContract())) {
+            errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
         }
 
         if (!errors.isEmpty()) {
