@@ -1,6 +1,6 @@
 package com.petshopadmin.application.domain;
 
-public class SpeciesDomain {
+public class SpecieDomain {
     private long id;
 
     private String name;
