@@ -1,18 +1,21 @@
 package com.petshopadmin.adapter.input.http;
 
+import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
+import com.petshopadmin.application.port.input.ContractUserCase;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
-import jakarta.websocket.server.PathParam;
-import org.springframework.data.repository.query.Param;
+import com.petshopadmin.exception.ValidationException;
+import com.petshopadmin.utils.converter.ServiceConverterMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -20,9 +23,14 @@ import java.util.List;
 public class ServiceController {
 
     private final ServiceUserCase serviceUserCase;
+    private final ServiceConverterMapper serviceConverterMapper;
+    private final ContractUserCase contractUserCase;
 
-    public ServiceController (ServiceUserCase serviceUserCase) {
+    public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper serviceConverterMapper,
+                              ContractUserCase contractUserCase) {
         this.serviceUserCase = serviceUserCase;
+        this.serviceConverterMapper = serviceConverterMapper;
+        this.contractUserCase = contractUserCase;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -47,6 +55,42 @@ public class ServiceController {
         list.stream().forEach(serviceDomain -> result.add(new ServiceResponseHTTP(serviceDomain)));
 
         return new ResponseHTTP("success to get services", null, result, LocalDateTime.now());
+
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
+        try {
+            ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
+
+            ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
+            serviceDomain.setContract(contractDomain);
+
+            serviceUserCase.create(serviceDomain);
+            return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(serviceDomain), null, LocalDateTime.now());
+        } catch (ValidationException e) {
+            return new ResponseHTTP("Errors found", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(path = "/validate-create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
+        try {
+            ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
+
+            ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
+            serviceDomain.setContract(contractDomain);
+
+            serviceUserCase.validate(serviceDomain);
+
+            ResponseHTTP responseHTTP = new ResponseHTTP("Validation successful", null, null, LocalDateTime.now());
+            return new ResponseEntity(responseHTTP, HttpStatus.OK);
+        } catch (ValidationException e) {
+            ResponseHTTP responseHTTP = new ResponseHTTP("Validation Errors", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
+            return new ResponseEntity(responseHTTP, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

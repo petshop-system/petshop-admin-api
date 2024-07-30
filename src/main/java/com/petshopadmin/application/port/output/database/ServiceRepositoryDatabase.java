@@ -10,4 +10,5 @@ public interface ServiceRepositoryDatabase {
 
     List<ServiceDomain> getByActive(Long contractID, boolean active);
 
+    ServiceDomain save(ServiceDomain serviceDomain);
 }

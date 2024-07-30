@@ -16,8 +16,7 @@ public class ServiceDomain {
 
     private ContractDomain contract;
 
-    public ServiceDomain() {
-    }
+    public ServiceDomain() {}
 
     public Long getId() {
         return id;

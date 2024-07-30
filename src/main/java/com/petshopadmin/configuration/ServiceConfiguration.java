@@ -1,5 +1,6 @@
 package com.petshopadmin.configuration;
 
+
 import com.petshopadmin.adapter.output.repository.database.ServiceJPARepository;
 import com.petshopadmin.application.port.input.ServiceUserCase;
 import com.petshopadmin.application.port.output.database.ServiceRepositoryDatabase;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceConfiguration {
 
     @Bean
-    ServiceRepositoryDatabase serviceRepositoryDatabase(ServiceJPARepository serviceJPARepository) {
+    ServiceRepositoryDatabase serviceRepositoryDatabase(ServiceJPARepository serviceJPARepository ) {
         return new com.petshopadmin.adapter.output.repository.database.ServiceRepositoryDatabase(serviceJPARepository);
     }
 
@@ -19,5 +20,6 @@ public class ServiceConfiguration {
     ServiceUserCase serviceUserCase (ServiceRepositoryDatabase serviceRepositoryDatabase) {
         return new ServiceService(serviceRepositoryDatabase);
     }
+
 
 }
