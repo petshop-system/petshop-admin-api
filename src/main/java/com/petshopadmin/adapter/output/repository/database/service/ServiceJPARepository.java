@@ -1,4 +1,4 @@
-package com.petshopadmin.adapter.output.repository.database;
+package com.petshopadmin.adapter.output.repository.database.service;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
