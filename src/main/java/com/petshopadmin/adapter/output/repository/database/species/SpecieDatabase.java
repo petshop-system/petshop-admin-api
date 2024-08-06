@@ -1,5 +1,6 @@
 package com.petshopadmin.adapter.output.repository.database.species;
 
+import com.petshopadmin.application.domain.SpecieDomain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,4 +24,27 @@ public class SpecieDatabase {
     @Column(name = "name")
     @NotEmpty(message = "Name is required")
     private String name;
+
+    @Transient
+    private SpecieDomain specieDomain;
+
+    private void setSpecieDomain(SpecieDomain specieDomain) {
+        this.specieDomain = specieDomain;
+    }
+
+    private SpecieDomain getSpecieDomain() {
+        return this.specieDomain;
+    }
+
+    SpecieDatabase createSpecieDomain() {
+        SpecieDomain specieDomain = new SpecieDomain();
+        this.setID(specieDomain.getId());
+        this.setName(specieDomain.getName());
+
+        return this;
+    }
+
+    SpecieDomain build(){
+        return this.getSpecieDomain();
+    }
 }
