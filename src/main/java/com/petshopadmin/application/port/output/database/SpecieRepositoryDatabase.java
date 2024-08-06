@@ -3,5 +3,5 @@ package com.petshopadmin.application.port.output.database;
 import com.petshopadmin.application.domain.SpecieDomain;
 
 public interface SpecieRepositoryDatabase {
-    SpecieDomain getByID(Long id);
+    SpecieDomain getByID(Long specieID);
 }
