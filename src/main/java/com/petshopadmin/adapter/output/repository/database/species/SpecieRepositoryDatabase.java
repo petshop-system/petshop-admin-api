@@ -12,11 +12,11 @@ public class SpecieRepositoryDatabase implements com.petshopadmin.application.po
 
     @Override
     public SpecieDomain getByID(Long specieID) {
-       if (ObjectUtils.isEmpty(specieID)) {
-           return null;
-       }
-
        SpecieDatabase specieDatabase = specieJPARepository.getByID(specieID);
+
+        if (ObjectUtils.isEmpty(specieDatabase)) {
+            return null;
+        }
 
        return specieDatabase.createSpecieDomain().build();
     }
