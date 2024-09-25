@@ -1,4 +1,4 @@
-package com.petshopadmin.adapter.input.http;
+package com.petshopadmin.adapter.input.http.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

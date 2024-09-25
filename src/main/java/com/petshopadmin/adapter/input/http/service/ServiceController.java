@@ -1,5 +1,6 @@
-package com.petshopadmin.adapter.input.http;
+package com.petshopadmin.adapter.input.http.service;
 
+import com.petshopadmin.adapter.input.http.ResponseHTTP;
 import com.petshopadmin.application.domain.ContractDomain;
 import com.petshopadmin.application.domain.ServiceDomain;
 import com.petshopadmin.application.port.input.ContractUserCase;

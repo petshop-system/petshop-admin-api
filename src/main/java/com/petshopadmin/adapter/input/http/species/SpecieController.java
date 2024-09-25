@@ -1,5 +1,6 @@
-package com.petshopadmin.adapter.input.http;
+package com.petshopadmin.adapter.input.http.species;
 
+import com.petshopadmin.adapter.input.http.ResponseHTTP;
 import com.petshopadmin.application.domain.SpecieDomain;
 import com.petshopadmin.application.port.input.SpeciesUserCase;
 import com.petshopadmin.exception.InternalServerErrorException;
@@ -26,6 +27,7 @@ public class SpecieController {
     public ResponseHTTP getByID(@PathVariable(name = "id", required = true) Long speciesID)
             throws InternalServerErrorException, NotFoundException {
         SpecieDomain specieDomain = speciesUserCase.getByID(speciesID);
+
         return new ResponseHTTP("success to get species by id", new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
     }
 }

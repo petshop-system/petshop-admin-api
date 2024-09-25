@@ -1,9 +1,8 @@
-package com.petshopadmin.adapter.input.http;
+package com.petshopadmin.adapter.input.http.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.petshopadmin.application.domain.ServiceDomain;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 
