@@ -37,7 +37,7 @@ public class SpecieDatabase {
     }
 
     SpecieDatabase createSpecieDomain() {
-        SpecieDomain specieDomain = new SpecieDomain();
+        this.specieDomain = new SpecieDomain();
         this.setID(specieDomain.getId());
         this.setName(specieDomain.getName());
 
