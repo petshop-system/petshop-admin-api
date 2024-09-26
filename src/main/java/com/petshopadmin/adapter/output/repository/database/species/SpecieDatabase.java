@@ -19,7 +19,7 @@ public class SpecieDatabase {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @NotNull
-    private long ID;
+    private Long ID;
 
     @Column(name = "name")
     @NotEmpty(message = "Name is required")
@@ -38,8 +38,8 @@ public class SpecieDatabase {
 
     SpecieDatabase createSpecieDomain() {
         this.specieDomain = new SpecieDomain();
-        this.setID(specieDomain.getId());
-        this.setName(specieDomain.getName());
+        this.specieDomain.setId(this.ID);
+        this.specieDomain.setName(this.getName());
 
         return this;
     }
