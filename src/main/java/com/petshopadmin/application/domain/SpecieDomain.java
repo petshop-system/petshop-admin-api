@@ -1,13 +1,13 @@
 package com.petshopadmin.application.domain;
 
 public class SpecieDomain {
-    private long id;
+    private Long id;
 
     private String name;
 
     public void setId(Long id) { this.id = id; }
 
-    public long getId() {return id; }
+    public Long getId() {return id; }
 
     public void setName(String name) { this.name = name; }
 
