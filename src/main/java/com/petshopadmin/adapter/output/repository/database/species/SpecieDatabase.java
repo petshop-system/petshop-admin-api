@@ -16,9 +16,8 @@ import lombok.NoArgsConstructor;
 public class SpecieDatabase {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @NotNull
     private Long ID;
 
     @Column(name = "name")
