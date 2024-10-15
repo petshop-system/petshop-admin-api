@@ -20,4 +20,17 @@ public class SpecieRepositoryDatabase implements com.petshopadmin.application.po
 
        return specieDatabase.createSpecieDomain().build();
     }
+
+    @Override
+    public SpecieDomain save(SpecieDomain specieDomain) {
+
+       SpecieDatabase specieDatabase = new SpecieDatabase();
+
+       if (!ObjectUtils.isEmpty(specieDomain)) {
+           specieDatabase.setName(specieDomain.getName());
+       }
+       SpecieDatabase specieDatabaseSaved = specieJPARepository.save(specieDatabase);
+
+       return specieDatabaseSaved.createSpecieDomain().build();
+    }
 }
