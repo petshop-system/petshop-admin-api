@@ -111,7 +111,7 @@ public class ServiceService implements ServiceUserCase {
         if (ObjectUtils.isEmpty(serviceDomain.getContract())) {
             errors.add(ILLEGAL_ARGUMENT_CONTRACT_EXCEPTION);
         }
-
+ 
         if (!errors.isEmpty()) {
             throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
         }
