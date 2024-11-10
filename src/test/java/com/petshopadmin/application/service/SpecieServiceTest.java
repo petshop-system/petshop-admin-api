@@ -3,13 +3,11 @@ package com.petshopadmin.application.service;
 import com.petshopadmin.application.domain.SpecieDomain;
 import com.petshopadmin.application.port.input.SpeciesUserCase;
 import com.petshopadmin.application.port.output.database.SpecieRepositoryDatabase;
-import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,8 +26,6 @@ public class SpecieServiceTest {
         specieDomain.setName("Felino");
         return specieDomain;
     }
-    
-    
 
     @Test
     public void getByIDShouldThrowNotFoundException() {
