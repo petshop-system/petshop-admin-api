@@ -38,8 +38,8 @@ spring:
   jpa:
     defer-datasource-initialization: true
     show-sql: true
-#    hibernate:
-#      ddl-auto: create-drop
+    hibernate:
+      ddl-auto: update
   sql:
     init:
       mode: always
@@ -48,6 +48,10 @@ spring:
 redis:
   host: localhost
   port: 6379
+
+#logging:
+#  level:
+#    com.petshopadmin: debug
 
 ---
 spring:
