@@ -19,12 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/service")
+@RequestMapping(path = "/service", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ServiceController {
 
     private final ServiceUserCase serviceUserCase;
     private final ServiceConverterMapper serviceConverterMapper;
     private final ContractUserCase contractUserCase;
+
+
 
     public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper serviceConverterMapper,
                               ContractUserCase contractUserCase) {
@@ -35,7 +37,7 @@ public class ServiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}")
     public ResponseHTTP getByID(@PathVariable(name = "id", required = true) Long serviceID,
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
@@ -46,7 +48,7 @@ public class ServiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = {"", "/"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = {"", "/"})
     public ResponseHTTP getActives(@RequestParam(value = "active") boolean active,
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
@@ -59,7 +61,7 @@ public class ServiceController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
@@ -75,7 +77,7 @@ public class ServiceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "/validate-create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/validate-create")
     public ResponseEntity validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
