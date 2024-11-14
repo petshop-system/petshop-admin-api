@@ -45,7 +45,7 @@ public class SpecieController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping(path = {"", "/"})
     public ResponseHTTP create(@RequestBody SpecieRequestHTTP specieRequestHTTP)
             throws InternalServerErrorException, ValidationException {
 
