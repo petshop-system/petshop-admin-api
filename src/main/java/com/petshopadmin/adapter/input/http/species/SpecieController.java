@@ -39,7 +39,7 @@ public class SpecieController {
     {
         SpecieDomain specieDomain = speciesUserCase.getByID(speciesID);
 
-        logger.info("Receive request for id: {}", speciesID);
+        logger.info("Request to get specie id: {}", speciesID);
 
         return new ResponseHTTP("success to get species by id", new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
     }
@@ -49,12 +49,12 @@ public class SpecieController {
     public ResponseHTTP create(@RequestBody SpecieRequestHTTP specieRequestHTTP)
             throws InternalServerErrorException, ValidationException {
 
-        logger.info("Receive request for create service: {}", specieRequestHTTP);
+        logger.info("Request to create specie: {}", specieRequestHTTP.name());
         try {
             SpecieDomain specieDomain = specieConverterMapper.toSpecieDomain(specieRequestHTTP);
 
             speciesUserCase.create(specieDomain);
-            logger.debug("Response: {}", specieDomain);
+            logger.info("Specie created: {}", specieDomain.getName());
 
             return new ResponseHTTP("sucess to create a new species",  new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
         } catch (ValidationException e) {
