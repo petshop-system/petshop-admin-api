@@ -1,4 +1,4 @@
-package com.petshopadmin.adapter.output.repository.database;
+package com.petshopadmin.adapter.output.repository.database.contract;
 
 import com.petshopadmin.application.domain.ContractDomain;
 import org.apache.commons.lang3.ObjectUtils;

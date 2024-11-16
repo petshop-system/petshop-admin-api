@@ -1,7 +1,7 @@
 package com.petshopadmin.configuration;
 
-import com.petshopadmin.adapter.output.repository.database.ContractJPARepository;
-import com.petshopadmin.adapter.output.repository.database.ContractRepositoryDatabase;
+import com.petshopadmin.adapter.output.repository.database.contract.ContractJPARepository;
+import com.petshopadmin.adapter.output.repository.database.contract.ContractRepositoryDatabase;
 import com.petshopadmin.application.port.input.ContractUserCase;
 import com.petshopadmin.application.service.ContractService;
 import org.springframework.context.annotation.Bean;

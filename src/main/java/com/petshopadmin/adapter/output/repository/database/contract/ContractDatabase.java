@@ -1,4 +1,4 @@
-package com.petshopadmin.adapter.output.repository.database;
+package com.petshopadmin.adapter.output.repository.database.contract;
 
 import com.petshopadmin.application.domain.ContractDomain;
 import jakarta.persistence.*;
@@ -30,7 +30,7 @@ public class ContractDatabase implements Serializable {
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
-    ContractDomain toContractDomain () {
+    public ContractDomain toContractDomain () {
 
         ContractDomain contractDomain = new ContractDomain();
         contractDomain.setId(this.getID());

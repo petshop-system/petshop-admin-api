@@ -1,9 +1,9 @@
-package com.petshopadmin.adapter.output.repository.database;
+package com.petshopadmin.adapter.output.repository.database.service;
 
+import com.petshopadmin.adapter.output.repository.database.contract.ContractDatabase;
 import com.petshopadmin.application.domain.ServiceDomain;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
