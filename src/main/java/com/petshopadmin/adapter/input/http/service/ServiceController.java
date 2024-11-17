@@ -9,6 +9,8 @@ import com.petshopadmin.exception.InternalServerErrorException;
 import com.petshopadmin.exception.NotFoundException;
 import com.petshopadmin.exception.ValidationException;
 import com.petshopadmin.utils.converter.ServiceConverterMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class ServiceController {
     private final ServiceConverterMapper serviceConverterMapper;
     private final ContractUserCase contractUserCase;
 
+    private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
+
     public ServiceController (ServiceUserCase serviceUserCase, ServiceConverterMapper serviceConverterMapper,
                               ContractUserCase contractUserCase) {
         this.serviceUserCase = serviceUserCase;
@@ -40,7 +44,11 @@ public class ServiceController {
     public ResponseHTTP getByID(@PathVariable(name = "id", required = true) Long serviceID,
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
+        logger.info("Request to get service id: {} and contract id: {}", serviceID, contractID);
+
         ServiceDomain serviceDomain = serviceUserCase.getByID(contractID, serviceID);
+        logger.info("Service domain object response: {}", serviceDomain.getName());
+
         return new ResponseHTTP("success to get service by id", new ServiceResponseHTTP(serviceDomain), null, LocalDateTime.now());
 
     }
@@ -52,6 +60,8 @@ public class ServiceController {
                                 @RequestParam(value = "contract") Long contractID) throws NotFoundException, InternalServerErrorException {
 
         List<ServiceDomain> list = serviceUserCase.getByActive(contractID, active);
+        logger.info("Receive request list of ID contract: {}, status: {}", contractID, active);
+
         List<ServiceResponseHTTP> result = new ArrayList<>();
         list.stream().forEach(serviceDomain -> result.add(new ServiceResponseHTTP(serviceDomain)));
 
@@ -63,12 +73,17 @@ public class ServiceController {
     @PostMapping
     public ResponseHTTP create(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
+            logger.info("Request to create service: {}", serviceRequestHTTP);
+
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
 
             ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
             serviceDomain.setContract(contractDomain);
+            logger.debug("Convert contract ID to service contract: {}", serviceDomain.getContract());
+
 
             serviceUserCase.create(serviceDomain);
+            logger.info("Service created: {}", serviceDomain.getName());
             return new ResponseHTTP("sucess to create a new services", new ServiceResponseHTTP(serviceDomain), null, LocalDateTime.now());
         } catch (ValidationException e) {
             return new ResponseHTTP("Errors found", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
@@ -79,12 +94,15 @@ public class ServiceController {
     @PostMapping(path = "/validate-create")
     public ResponseEntity validate(@RequestBody ServiceRequestHTTP serviceRequestHTTP) throws NotFoundException, InternalServerErrorException {
         try {
+            logger.info("Request to validate the creation of a new service with the data: {}", serviceRequestHTTP);
             ServiceDomain serviceDomain = serviceConverterMapper.toServiceDomain(serviceRequestHTTP);
 
             ContractDomain contractDomain = contractUserCase.getById(serviceRequestHTTP.contractid());
             serviceDomain.setContract(contractDomain);
+            logger.debug("Convert validate contract ID to service contract: {}", serviceDomain);
 
             serviceUserCase.validate(serviceDomain);
+            logger.info("Validated service: {}", serviceDomain);
 
             ResponseHTTP responseHTTP = new ResponseHTTP("Validation successful", null, null, LocalDateTime.now());
             return new ResponseEntity(responseHTTP, HttpStatus.OK);
