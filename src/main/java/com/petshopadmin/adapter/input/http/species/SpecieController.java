@@ -33,7 +33,7 @@ public class SpecieController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "id/{id}")
     public ResponseHTTP getByID(@PathVariable(name = "id", required = true) Long speciesID)
             throws InternalServerErrorException, NotFoundException
     {
@@ -42,6 +42,18 @@ public class SpecieController {
         logger.info("Request to get specie id: {}", speciesID);
 
         return new ResponseHTTP("success to get species by id", new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @GetMapping(path = "name/{name}")
+    public ResponseHTTP getByName(@PathVariable(name = "name", required = true) String specieName)
+            throws InternalServerErrorException, NotFoundException {
+
+        SpecieDomain specieDomain = speciesUserCase.getByName(specieName);
+        logger.info("Request to get specie name: {}", specieDomain.getName());
+
+        return new ResponseHTTP("success to get species by name", new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
     }
 
     @ResponseStatus(HttpStatus.CREATED)

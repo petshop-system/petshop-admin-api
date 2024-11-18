@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SpecieJPARepository extends JpaRepository<SpecieDatabase, Long> {
     SpecieDatabase getByID(Long specieID);
+    SpecieDatabase getByName(String specieName);
 }

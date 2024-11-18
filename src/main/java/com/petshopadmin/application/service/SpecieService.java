@@ -39,6 +39,22 @@ public class SpecieService implements SpeciesUserCase {
     }
 
     @Override
+    public SpecieDomain getByName(String specieName) throws InternalServerErrorException, NotFoundException {
+
+        if (StringUtils.isBlank(specieName)) {
+            throw new InternalServerErrorException(SPECIE_INTERNAL_SERVER_ERROR);
+        }
+
+        SpecieDomain specieDomain = specieRepositoryDatabase.getByName(specieName);
+
+        if (ObjectUtils.isEmpty(specieDomain)) {
+            throw new NotFoundException(SPECIE_NOT_FOUND);
+        }
+
+        return specieDomain;
+    }
+
+    @Override
     public SpecieDomain create(SpecieDomain specieDomain) throws InternalServerErrorException, ValidationException {
         this.validate(specieDomain);
         return specieRepositoryDatabase.save(specieDomain);
