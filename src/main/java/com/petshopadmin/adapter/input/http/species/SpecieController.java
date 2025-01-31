@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "species", produces =  MediaType.APPLICATION_JSON_VALUE)
@@ -33,7 +34,7 @@ public class SpecieController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = "id/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseHTTP getByID(@PathVariable(name = "id", required = true) Long speciesID)
             throws InternalServerErrorException, NotFoundException
     {
@@ -46,9 +47,13 @@ public class SpecieController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping(path = "name/{name}")
-    public ResponseHTTP getByName(@PathVariable(name = "name", required = true) String specieName)
+    @GetMapping(path = {"", "/"})
+    public ResponseHTTP getByQueryParams(@RequestParam Map<String, String> queryParams)
             throws InternalServerErrorException, NotFoundException {
+        
+        logger.info("Request to get query params: {}", queryParams);
+      
+        String specieName = queryParams.get("name");
 
         SpecieDomain specieDomain = speciesUserCase.getByName(specieName);
         logger.info("Request to get specie name: {}", specieDomain.getName());
