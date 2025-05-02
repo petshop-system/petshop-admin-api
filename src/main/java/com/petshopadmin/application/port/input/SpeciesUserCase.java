@@ -9,4 +9,5 @@ public interface SpeciesUserCase {
     SpecieDomain create(SpecieDomain specieDomain) throws InternalServerErrorException, ValidationException;
     SpecieDomain getByID(Long specieID) throws InternalServerErrorException, NotFoundException;
     void validate(SpecieDomain specieDomain) throws  InternalServerErrorException, ValidationException;
+    void update(Long id, SpecieDomain specieDomain) throws InternalServerErrorException, NotFoundException;
 }

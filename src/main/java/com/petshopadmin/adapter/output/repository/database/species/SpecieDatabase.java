@@ -24,6 +24,9 @@ public class SpecieDatabase {
     @NotEmpty(message = "Name is required")
     private String name;
 
+    @Column(name = "disabled", nullable = false)
+    private boolean disabled;
+
     @Transient
     private SpecieDomain specieDomain;
 
@@ -39,6 +42,7 @@ public class SpecieDatabase {
         this.specieDomain = new SpecieDomain();
         this.specieDomain.setId(this.ID);
         this.specieDomain.setName(this.getName());
+        this.specieDomain.setDisabled(this.disabled);
 
         return this;
     }
