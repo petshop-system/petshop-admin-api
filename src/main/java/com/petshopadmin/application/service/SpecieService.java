@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SpecieService implements SpeciesUserCase {
     private final SpecieRepositoryDatabase specieRepositoryDatabase;
@@ -30,6 +29,22 @@ public class SpecieService implements SpeciesUserCase {
     public SpecieDomain getByID(Long specieID) throws  InternalServerErrorException, NotFoundException{
 
         SpecieDomain specieDomain = specieRepositoryDatabase.getByID(specieID);
+
+        if (ObjectUtils.isEmpty(specieDomain)) {
+            throw new NotFoundException(SPECIE_NOT_FOUND);
+        }
+
+        return specieDomain;
+    }
+
+    @Override
+    public SpecieDomain getByName(String specieName) throws InternalServerErrorException, NotFoundException {
+
+        if (StringUtils.isBlank(specieName)) {
+            throw new InternalServerErrorException(SPECIE_INTERNAL_SERVER_ERROR);
+        }
+
+        SpecieDomain specieDomain = specieRepositoryDatabase.getByName(specieName);
 
         if (ObjectUtils.isEmpty(specieDomain)) {
             throw new NotFoundException(SPECIE_NOT_FOUND);
