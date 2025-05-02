@@ -61,4 +61,16 @@ public class SpecieController {
             return new ResponseHTTP("Errors Found", null, Arrays.asList(e.getMessages().toArray()), LocalDateTime.now());
         }
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(path = "/{id}")
+    public ResponseHTTP update(@PathVariable(name = "id", required = true) Long id,
+                               @RequestBody SpecieRequestHTTP specieRequestHTTP)
+            throws InternalServerErrorException, NotFoundException  {
+
+        SpecieDomain specieDomain = specieConverterMapper.toSpecieDomain(specieRequestHTTP);
+        speciesUserCase.update(id, specieDomain);
+
+        return new ResponseHTTP("Species updated successfully", null, null, LocalDateTime.now());
+    }
 }

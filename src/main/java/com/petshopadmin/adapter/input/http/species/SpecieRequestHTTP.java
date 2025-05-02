@@ -6,4 +6,5 @@ import java.io.Serializable;
 
 public record SpecieRequestHTTP (
                                     String name,
+                                    boolean disabled,
                                     @JsonProperty("specie_id") Long specieid) implements Serializable {}

@@ -45,6 +45,22 @@ public class SpecieService implements SpeciesUserCase {
     }
 
     @Override
+    public void update(Long id, SpecieDomain specieDomainUpdated) throws InternalServerErrorException, NotFoundException {
+
+        if (ObjectUtils.isEmpty(id))
+            throw new InternalServerErrorException(SPECIE_INTERNAL_SERVER_ERROR);
+
+        SpecieDomain specieDomain = this.specieRepositoryDatabase.getByID(id);
+
+        if (ObjectUtils.isEmpty(specieDomain))
+            throw new NotFoundException(SPECIE_NOT_FOUND);
+
+        specieDomain.setName(specieDomainUpdated.getName());
+
+        this.specieRepositoryDatabase.update(id, specieDomain);
+    }
+
+    @Override
     public void validate(SpecieDomain specieDomain) throws InternalServerErrorException, ValidationException {
         if (ObjectUtils.isEmpty(specieDomain)) {
             throw new InternalServerErrorException(SPECIE_INTERNAL_SERVER_ERROR);
