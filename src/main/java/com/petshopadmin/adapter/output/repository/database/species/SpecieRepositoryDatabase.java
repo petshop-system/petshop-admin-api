@@ -1,24 +1,34 @@
 package com.petshopadmin.adapter.output.repository.database.species;
 
 import com.petshopadmin.application.domain.SpecieDomain;
+import com.petshopadmin.utils.converter.SpecieConverterMapper;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public class SpecieRepositoryDatabase implements com.petshopadmin.application.port.output.database.SpecieRepositoryDatabase {
+import java.util.*;
+
+public class SpecieRepositoryDatabase implements
+        com.petshopadmin.application.port.output.database.SpecieRepositoryDatabase {
    private final SpecieJPARepository specieJPARepository;
 
-   public SpecieRepositoryDatabase (SpecieJPARepository specieJPARepository) {
+   private final SpecieConverterMapper specieConverterMapper;
+
+   public SpecieRepositoryDatabase (SpecieJPARepository specieJPARepository,
+                                    SpecieConverterMapper specieConverterMapper) {
        this.specieJPARepository = specieJPARepository;
+       this.specieConverterMapper = specieConverterMapper;
    }
 
     @Override
-    public SpecieDomain getByID(Long specieID) {
-       SpecieDatabase specieDatabase = specieJPARepository.getByID(specieID);
+    public SpecieDomain getByID(Long id) {
+       SpecieDatabase specieDatabase = specieJPARepository.getById(id);
 
         if (ObjectUtils.isEmpty(specieDatabase)) {
             return null;
         }
 
-       return specieDatabase.createSpecieDomain().build();
+       return specieConverterMapper.to(specieDatabase);
     }
 
     @Override
@@ -29,7 +39,7 @@ public class SpecieRepositoryDatabase implements com.petshopadmin.application.po
            return null;
        }
 
-       return specieDatabase.createSpecieDomain().build();
+       return specieConverterMapper.to(specieDatabase);
     }
 
     @Override
@@ -42,6 +52,26 @@ public class SpecieRepositoryDatabase implements com.petshopadmin.application.po
        }
        SpecieDatabase specieDatabaseSaved = specieJPARepository.save(specieDatabase);
 
-       return specieDatabaseSaved.createSpecieDomain().build();
+       return specieConverterMapper.to(specieDatabaseSaved);
+    }
+
+    @Override
+    public Collection<SpecieDomain> getBy(Map<String, Object> params) {
+
+        Specification<SpecieDatabase> spec = Specification
+                .where(SpecieSpecifications.defaultWhereParam());
+
+        if (ObjectUtils.isNotEmpty(params.get("name")))
+            spec.and(SpecieSpecifications
+                    .containName(String.valueOf(params.get("name"))));
+
+        Collection<SpecieDomain> specieDomains = new ArrayList<>();
+        specieJPARepository.findAll(spec)
+                .parallelStream()
+                .forEach(specieDatabase -> {
+                    specieDomains.add(specieConverterMapper.to(specieDatabase));
+                });
+
+        return specieDomains;
     }
 }

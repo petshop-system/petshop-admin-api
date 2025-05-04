@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 @RestController
@@ -48,17 +49,14 @@ public class SpecieController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping(path = {"", "/"})
-    public ResponseHTTP getByQueryParams(@RequestParam Map<String, String> queryParams)
-            throws InternalServerErrorException, NotFoundException {
+    public ResponseHTTP getByQueryParams(@RequestParam Map<String, Object> queryParams)
+            throws InternalServerErrorException, NotFoundException, ValidationException {
         
         logger.info("Request to get query params: {}", queryParams);
       
-        String specieName = queryParams.get("name");
+        Collection<SpecieDomain> by = speciesUserCase.getBy(queryParams);
 
-        SpecieDomain specieDomain = speciesUserCase.getByName(specieName);
-        logger.info("Request to get specie name: {}", specieDomain.getName());
-
-        return new ResponseHTTP("success to get species by name", new SpecieResponseHTTP(specieDomain), null, LocalDateTime.now());
+        return new ResponseHTTP("success to get species", null, by, LocalDateTime.now());
     }
 
     @ResponseStatus(HttpStatus.CREATED)

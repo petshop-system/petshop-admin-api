@@ -11,7 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class SpecieService implements SpeciesUserCase {
     private final SpecieRepositoryDatabase specieRepositoryDatabase;
@@ -80,6 +82,11 @@ public class SpecieService implements SpeciesUserCase {
             throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @Override
+    public Collection<SpecieDomain> getBy(Map<String, Object> params) throws InternalServerErrorException, ValidationException {
+        return specieRepositoryDatabase.getBy(params);
     }
 
 }
